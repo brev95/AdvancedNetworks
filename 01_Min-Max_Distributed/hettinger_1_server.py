@@ -9,7 +9,9 @@
 from socket import *
 from sys import *
 import numpy
-
+from time import sleep
+from signal import *
+import math
 
 # Create a socket
 serverSocket = socket(AF_INET, SOCK_STREAM)
@@ -33,24 +35,50 @@ serverSocket.bind(('', port))
 serverSocket.listen(1)
 conn, addr = serverSocket.accept()
 
+
+def signalhandler(signal,frame):
+	print('killing server')
+	conn.close()
+	exit()
+signal(SIGINT, signalhandler)
+
+
 # Receive data
 while 1:
-	data = conn.recv(1024)
+	#conn, addr = serverSocket.accept()
+	data = conn.recv(128).strip()
+	#data = int(data)
 	print data
-	if data == "-1":
+	if data=="-1":
+		print('exiting')
 		break
 	else:
 		numArray.append(int(data))
-	
-
-# Compute server results
+		
 dat = [str(min(numArray)), str(max(numArray)), str(numpy.std(numArray))]
+dat = "_".join(dat)
 
-print "_".join(dat)
+print dat
 
-serverSocket.sendall("_".join(dat))
-#serverSocket.sendall("anything")
+conn.sendall(dat)
+
+#serverSocket.sendall(dat)
+
+print "Closing Socket"
+		
 conn.close()
+	
+		
+# Compute server results
+#dat = [str(min(numArray)), str(max(numArray)), str(numpy.std(numArray))]
+
+#print "_".join(dat)
+
+#serverSocket.sendall("_".join(dat))
+#serverSocket.sendall("anything")
+
+#sleep(0.05)
+#conn.close()
 
 
 

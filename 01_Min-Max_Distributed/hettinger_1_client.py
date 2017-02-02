@@ -66,44 +66,44 @@ clientSocket2.connect(server_address_2)
 server_address_3 = (ip3, port3)
 clientSocket3.connect(server_address_3)
 
-
+#try:
 # Send packets
 for i in range(0, nums):
 	if i % 3 == 1:
 		clientSocket1.send(str(numArray[i]))
-		sleep(0.05)
 	elif i % 3 == 2:
 		clientSocket2.send(str(numArray[i]))
-		sleep(0.05)
 	elif i % 3 == 0:
 		clientSocket3.send(str(numArray[i]))
-		sleep(0.05)
+	sleep(0.05)
 
-
+#finally:
 # Send -1 and parse received data
-clientSocket1.send(str(-1))
-sleep(0.05)
+clientSocket1.send("-1")
 message1 = clientSocket1.recv(1024)
-print message1
+sleep(0.05)
+#print message1
 returnVal1 = message1.split("_")
-clientSocket1.close()
 
-clientSocket2.send(str(-1))
-sleep(0.05)
+clientSocket2.send("-1")
 message2 = clientSocket2.recv(1024)
-returnVal2 = message2.split("_")
-clientSocket2.close()
-
-clientSocket3.send(str(-1))
 sleep(0.05)
+#print message2
+returnVal2 = message2.split("_")
+
+clientSocket3.send("-1")
 message3 = clientSocket3.recv(1024)
+sleep(0.05)
+#print message3
 returnVal3 = message3.split("_")
-clientSocket3.close()
 
 print returnVal1
 print returnVal2
 print returnVal3
 
+clientSocket1.close()
+clientSocket2.close()
+clientSocket3.close()
 
 
 minVal = min(int(returnVal1[0]), int(returnVal2[0]), int(returnVal3[0]));
@@ -118,8 +118,8 @@ print "Maximum value: " + str(maxVal)
 print "Standard deviation value: " + str(stddevAvg)
 
 print "\n\n"
-
-
+	
+	
 # Reset variables
 minVal = 1000001
 maxVal = 0
@@ -141,11 +141,6 @@ print "Test results computed only by the client\n\n"
 print "Minimum value: " + str(minVal)
 print "Maximum value: " + str(maxVal)
 print "Standard deviation value: " + str(stddevAvg)
-
-
-
-
-
 
 
 
