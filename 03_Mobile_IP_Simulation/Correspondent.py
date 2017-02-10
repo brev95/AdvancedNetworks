@@ -14,61 +14,55 @@
 #
 ########################################################################
 
+class Packet:
+	frameType = 0
+	ipAddrA = ""
+	ipAddrB = ""
+	msg = ""
+	def init(self):
+		self.data = []
+
+def str_to_class(str):
+    return getattr(sys.modules[__name__], str)
+
 # Imports
 from socket import *
 from sys import *
 
 # Variables
-frameChoice = 0
 message = ""
-frame_field = ""
 
 # Set up socket
-clientSocket = socket(AF_INET, SOCK_STREAM)
+clientSocket = socket(AF_INET, SOCK_DGRAM)
 
-home_agent_ip = args[1]
+home_agent_ip = argv[1]
 
 server_address = (home_agent_ip, 6000)
-clientSocket1.connect(server_address)
+clientSocket.connect(server_address)
 
 while(1):
-	print "Type '0' to shutdown the home agent\n Type '5' to send a message\n: "
-	frameChoice = raw_input
-	switch(frameChoice):
-		case 0: # Shutdown
-			frame_field = ["0", "", "", "Shutdown"]
-			frame_field = "_".join(frame_field)
-			clientSocket.sendto(frame_field))
-			break;
-		#case 1: # Register a mobile node with a foreign agent
-			
-		#case 2: # Deregister a mobile node with a foreign agent
-			
-		#case 3: # Register a mobile node with a home agent
-			
-		#case 4: # Deregister a mobile node with a home agent
-			
-		case 5: # Send a message to a mobile node
-			print "Type your message: "
-			message = raw_input
-			frame_field = ["5", "10.0.0.5", "10.0.0.4", message] # Need to figure out how to find the IP addresses
-			frame_field = "_".join(frame_field)
-			clientSocket.sendto(frame_field)
-			break;
-		#case 6: # Imform correspondent that no mobile node with that permanent IP address is registered
-			
-		#case 7: # Send a message to a mobile node
-			
-		#case 8: # Send a message to a mobile node
-			
-		#case 9: # Send a message to a correspondent
-			
-		default:
-			print "The Correspondent cannot send this message type.\n"
+	print "Type '0' to shutdown the home agent\nType '5' to send a message:\n"
+	frameChoice = raw_input("Choice: ")
+	if frameChoice == "0": # Shutdown
+		packet = Packet()
+		packet.frameType = 0
+		clientSocket.sendto(str(packet), (home_agent_ip))
+		
+	elif frameChoice == "5": # Send a message to a mobile node
+		print "Type your message: "
+		message = raw_input("Message: ")
+		packet = Packet()
+		packet.fieldType = 5
+		packet.ipAddrA = "10.0.0.5"
+		packet.ipAddrB = "10.0.0.4" # Figure out what to do with ip addresses
+		clientSocket.sendto(str(packet), (home_agent_ip))
+		
+	else:
+		print "The Correspondent cannot send this message type.\n"
 	
-	frame_field = clientSocket.recvfrom(1024)
-	ret_msg = frame_field.split("_")
-	print ret_msg[3]
+	packet = clientSocket.recvfrom(1024)
+	str_to_class(packet)
+	print packet.msg
 	
 			
 	
