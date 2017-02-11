@@ -22,12 +22,10 @@ class Packet:
 	def init(self):
 		self.data = []
 
-def str_to_class(str):
-    return getattr(sys.modules[__name__], str)
-
 # Imports
 from socket import *
 from sys import *
+import json
 
 # Variables
 message = ""
@@ -46,7 +44,7 @@ while(1):
 	if frameChoice == "0": # Shutdown
 		packet = Packet()
 		packet.frameType = 0
-		clientSocket.sendto(str(packet), (home_agent_ip))
+		clientSocket.sendto(json.dumps(packet.__dict__), (home_agent_ip))
 		
 	elif frameChoice == "5": # Send a message to a mobile node
 		print "Type your message: "
@@ -55,13 +53,17 @@ while(1):
 		packet.fieldType = 5
 		packet.ipAddrA = "10.0.0.5"
 		packet.ipAddrB = "10.0.0.4" # Figure out what to do with ip addresses
-		clientSocket.sendto(str(packet), (home_agent_ip))
+		clientSocket.sendto(json.dumps(packet.__dict__), (home_agent_ip))
 		
 	else:
 		print "The Correspondent cannot send this message type.\n"
 	
 	packet = clientSocket.recvfrom(1024)
-	str_to_class(packet)
+	packet = json.loads(packet)
+	if packet.frameType == 6:
+		break; # insert stuff here
+	elif packet.frameType == 9:
+		break; # insert stuff here
 	print packet.msg
 	
 			

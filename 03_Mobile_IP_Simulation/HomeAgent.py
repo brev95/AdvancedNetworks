@@ -19,12 +19,10 @@ class Packet:
 	def init(self):
 		self.data = []
 
-def str_to_class(str):
-    return getattr(sys.modules[__name__], str)
-
 # Imports
 from socket import *
 from sys import *
+import json
 
 # Create a socket
 serverSocket = socket(AF_INET, SOCK_DGRAM)
@@ -43,20 +41,25 @@ serverSocket.bind((own_ip_addr, 7000))
 
 while(1):
 	packet, addr = serverSocket.recvfrom(1024)
-	str_to_class(packet)
+	packet = json.loads(packet)
 	if packet.frameType == 0: # Shutdown
 		print "Shutting down"
 		quit()
+	elif packet.frameType == 3: # Register a mobile node
+		
+	elif packet.frameType == 4: # Deregister a mobile node
 		
 	elif packet.frameType == 5: # Send a message to a mobile node
 		print "Received message from Correspondent"
 		if mobileRegistered == True:
-			print "hi"
+			print "hi" # Send to foreign agent (Type 7)
 		else:
+			packet = Packet()
+			packet.frameType = 6
 			packet.ipAddrA = "10.0.0.5"
 			packet.ipAddrB = "10.0.0.4"
 			packet.msg = "Mobile node is not currently registered."
-			conn.sendto(packet)
+			conn.sendto(json.dumps(packet.__dict__))
 		
 	else:
 		print "The Correspondent cannot send this message type.\n"
