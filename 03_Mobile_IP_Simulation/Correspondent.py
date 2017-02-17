@@ -28,13 +28,13 @@ from sys import *
 import cPickle as pickle
 
 # Check for usage error
-if len(argv) != 2:
-	print "usage: python HomeAgent.py <Correspondent IP Address> <HomeAgent IP Address>"
+if len(argv) != 3:
+	print "usage: python HomeAgent.py <HomeAgent IP Address> <Correspondent IP Address>"
 	sys.exit()
 
 # Variables
-own_ip_addr = argv[1]
-home_agent_ip = argv[2]
+home_agent_ip = argv[1]
+own_ip_addr = argv[2]
 message = ""
 
 # Set up socket
@@ -44,29 +44,27 @@ server_address = (home_agent_ip, 6000)
 clientSocket.connect(server_address)
 
 while(1):
-	packet = Packet()
-	print "Type '0' to shutdown the Correspondent\nType '5' to send a message:\n"
+	#packet = Packet()
+	print "Type '0' to shutdown the Correspondent\nType '5' to send a message:"
 	frameChoice = raw_input("Choice: ")
 	if frameChoice == "0": # Shutdown
-		#packet = Packet()
+		packet = Packet()
 		packet.frameType = 0
 		sendPacket = pickle.dumps(packet)
 		print "Shutting down..."
-		clientSocket.sendto(sendPacket, (home_agent_ip))
+		clientSocket.sendto(sendPacket, (home_agent_ip, 7000))
+		clientSocket.close()
 		sys.exit()
-		
 	elif frameChoice == "5": # Send a message to a mobile node
-		# print "Type your message: "
 		message = raw_input("Message: ")
-		#packet = Packet()
-		packet.fieldType = 5
+		packet = Packet()
+		packet.frameType = 5
 		packet.ipAddrA = own_ip_addr
 		packet.ipAddrB = home_agent_ip
 		packet.msg = message
 		sendPacket = pickle.dumps(packet)
 		print "Sending message to HomeAgent..."
-		clientSocket.sendto(sendPacket, (home_agent_ip))
-		
+		clientSocket.sendto(sendPacket, (home_agent_ip, 7000))
 	else:
 		print "The Correspondent cannot send this message type.\n"
 	
@@ -76,7 +74,7 @@ while(1):
 	if packet.frameType == 6:
 		print "From HomeAgent: " + packet.msg
 	elif packet.frameType == 9:
-		print "From Mobile Node: " + packet.msg
+		print "From MobileNode: " + packet.msg
 	
 	
 		
