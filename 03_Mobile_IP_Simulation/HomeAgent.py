@@ -22,11 +22,12 @@ class Packet:
 # Imports
 from socket import *
 from sys import *
-import json
+import cPickle as pickle
 
-# Create a socket
-serverSocket = socket(AF_INET, SOCK_DGRAM)
-
+# Check for usage error
+if len(argv) != 3:
+	print "usage: python HomeAgent.py <Correspondent IP Address> <HomeAgent IP Address>"
+	sys.exit()
 
 # Variables
 corr_ip_addr = argv[1]
@@ -34,59 +35,59 @@ own_ip_addr = argv[2]
 message = ""
 frameChoice = 0
 mobileRegistered = False
-frame_field = []
+
+mobile_ip_addr = ""
+foreign_ip_addr = ""
+
+# Create a socket
+serverSocket = socket(AF_INET, SOCK_DGRAM)
+
 
 # Bind socket
 serverSocket.bind((own_ip_addr, 7000))
 
 while(1):
-	packet, addr = serverSocket.recvfrom(1024)
-	packet = json.loads(packet)
+	recvPacket, addr = serverSocket.recvfrom(1024)
+	packet = Packet()
+	packet = pickle.loads(recvPacket)
 	if packet.frameType == 0: # Shutdown
-		print "Shutting down"
-		quit()
+		print "Correspondent shutting down..."
 	elif packet.frameType == 3: # Register a mobile node
-		
+		print "Mobile Node registered..."
+		mobileRegistered = True
+		foreign_ip_addr = packet.ipAddrA
+		mobile_ip_addr = packet.ipAddrB
 	elif packet.frameType == 4: # Deregister a mobile node
-		
+		print "MobileNode deregistered..."
+		mobileRegistered = False
+		mobile_ip_addr = ""
 	elif packet.frameType == 5: # Send a message to a mobile node
 		print "Received message from Correspondent"
 		if mobileRegistered == True:
-			print "hi" # Send to foreign agent (Type 7)
+			sendPacket = Packet()
+			sendPacket.frameType = 7
+			sendPacket.ipAddrA = packet.ipAddrA
+			sendPacket.ipAddrB = foreign_ip_addr
+			sendPacket.msg = packet.msg
+			sendPacket = pickle.dumps(sendPacket)
+			conn.sendto(sendPacket, foreign_ip_addr)
 		else:
-			packet = Packet()
-			packet.frameType = 6
-			packet.ipAddrA = "10.0.0.5"
-			packet.ipAddrB = "10.0.0.4"
-			packet.msg = "Mobile node is not currently registered."
-			conn.sendto(json.dumps(packet.__dict__))
+			sendPacket = Packet()
+			sendPacket.frameType = 6
+			sendPacket.ipAddrB = own_ip_addr
+			sendPacket.msg = "Mobile node is not currently registered."
+			sendPacket = pickle.dumps(packet)
+			conn.sendto(sendPacket, corr_ip_addr)
 		
 	else:
 		print "The Correspondent cannot send this message type.\n"
 		
 		
 		
-#switch(frameChoice):
-		#case 0: # Shutdown
-			
-		#case 1: # Register a mobile node with a foreign agent
-			
-		#case 2: # Deregister a mobile node with a foreign agent
-			
-		#case 3: # Register a mobile node with a home agent
-			
-		#case 4: # Deregister a mobile node with a home agent
-			
-		#case 5: # Send a message to a mobile node
-			
-		#case 6: # Imform correspondent that no mobile node with that permanent IP address is registered
-			
-		#case 7: # Send a message to a mobile node
-			
-		#case 8: # Send a message to a mobile node
-			
-		#case 9: # Send a message to a correspondent
-			
-		#default:
-		#	print "The Correspondent cannot send this message type.\n"
-		#	break;
+		
+		
+		
+		
+		
+		
+		

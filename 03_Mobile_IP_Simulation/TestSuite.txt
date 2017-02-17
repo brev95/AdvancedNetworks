@@ -1,0 +1,56 @@
+	C - menu
+	C - Prompt to type msg
+T5: send msg to MobileNode == Correspondent --> HomeAgent
+	HA - print event 
+T6: HomeAgent responds with no node registered == HomeAgent --> Correspondent
+	C - print response
+	C - menu
+	
+	MN - menu
+T1: register MobileNode == MobileNode --> ForeignAgent
+	FA - print event
+T3: register MobileNode == ForeignAgent --> HomeAgent
+	HA - print event
+	HA - register node
+	MN - listen
+
+	C - menu
+	C - Prompt to type msg
+T5: send msg to MobileNode == Correspondent --> HomeAgent
+	HA - print event
+T7: send msg to MobileNode == HomeAgent --> ForeignAgent
+	FA - print event
+T8: send msg to MobileNode == ForeignAgent --> MobileNode
+	MN - print msg
+	MN - Prompt to reply to msg
+	C - listen
+
+	MN - reply to msg
+T9: send msg to Correspondent == MobileNode --> Correspondent
+	C - print msg
+	C - menu
+	
+	MN - menu
+T2: deregister MobileNode == MobileNode --> ForeignAgent
+	FA - print event
+T3: deregister MobileNode == ForeignAgent --> HomeAgent
+	HA - print event
+	
+	MN - menu
+T0: shutdown MobileNode == MobileNode --> ForeignAgent
+	MN - shutdown
+
+	C - menu
+	C - Prompt to type msg
+T5: send msg to MobileNode == Correspondent --> HomeAgent
+	HA - print event
+T6: HomeAgent responds with no node registered == HomeAgent --> Correspondent
+	C - print response
+	C - menu
+	
+	
+	
+	
+	MN - 5th comp
+	MN - menu
+	REPEAT ABOVE

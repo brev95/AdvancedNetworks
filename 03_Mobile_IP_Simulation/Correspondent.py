@@ -25,47 +25,70 @@ class Packet:
 # Imports
 from socket import *
 from sys import *
-import json
+import cPickle as pickle
+
+# Check for usage error
+if len(argv) != 2:
+	print "usage: python HomeAgent.py <Correspondent IP Address> <HomeAgent IP Address>"
+	sys.exit()
 
 # Variables
+own_ip_addr = argv[1]
+home_agent_ip = argv[2]
 message = ""
 
 # Set up socket
 clientSocket = socket(AF_INET, SOCK_DGRAM)
 
-home_agent_ip = argv[1]
-
 server_address = (home_agent_ip, 6000)
 clientSocket.connect(server_address)
 
 while(1):
-	print "Type '0' to shutdown the home agent\nType '5' to send a message:\n"
+	packet = Packet()
+	print "Type '0' to shutdown the Correspondent\nType '5' to send a message:\n"
 	frameChoice = raw_input("Choice: ")
 	if frameChoice == "0": # Shutdown
-		packet = Packet()
+		#packet = Packet()
 		packet.frameType = 0
-		clientSocket.sendto(json.dumps(packet.__dict__), (home_agent_ip))
+		sendPacket = pickle.dumps(packet)
+		print "Shutting down..."
+		clientSocket.sendto(sendPacket, (home_agent_ip))
+		sys.exit()
 		
 	elif frameChoice == "5": # Send a message to a mobile node
-		print "Type your message: "
+		# print "Type your message: "
 		message = raw_input("Message: ")
-		packet = Packet()
+		#packet = Packet()
 		packet.fieldType = 5
-		packet.ipAddrA = "10.0.0.5"
-		packet.ipAddrB = "10.0.0.4" # Figure out what to do with ip addresses
-		clientSocket.sendto(json.dumps(packet.__dict__), (home_agent_ip))
+		packet.ipAddrA = own_ip_addr
+		packet.ipAddrB = home_agent_ip
+		packet.msg = message
+		sendPacket = pickle.dumps(packet)
+		print "Sending message to HomeAgent..."
+		clientSocket.sendto(sendPacket, (home_agent_ip))
 		
 	else:
 		print "The Correspondent cannot send this message type.\n"
 	
-	packet = clientSocket.recvfrom(1024)
-	packet = json.loads(packet)
+	recvPacket = clientSocket.recvfrom(1024)
+	packet = Packet()
+	packet = pickle.load(recvPacket)
 	if packet.frameType == 6:
-		break; # insert stuff here
+		print "From HomeAgent: " + packet.msg
 	elif packet.frameType == 9:
-		break; # insert stuff here
-	print packet.msg
+		print "From Mobile Node: " + packet.msg
 	
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 			
 	
 
