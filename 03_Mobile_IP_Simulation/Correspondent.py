@@ -75,7 +75,7 @@ while(1):
 	if packet.frameType == 6:
 		print "Mobile Node not registered\n"
 	elif packet.frameType == 9:
-		print "From MobileNode: " + packet.msg + "\n"
+		print "\nFrom MobileNode: " + packet.msg + "\n"
 		
 		
 		
