@@ -39,11 +39,14 @@ numLines = sum(1 for line in open(configFileName))
 
 configFile = open(configFileName)
 
-for i in range(1, numLines):
-	configLine = configFile.readLine()
+for i in range(0, numLines):
+	configLine = configFile.readline()
 	configTable.append(configLine.split(" "))
 
+for MAC in (i[1] for i in configTable):
+	MAC.strip()
 
+#if packet.srcMAC in (j[srcMACAddr] for j in table):
 
 # Set up socket
 sock = socket(AF_INET, SOCK_DGRAM)
@@ -59,9 +62,11 @@ while(1):
 	packet.srcMAC = configTable[randLine1][1]
 	packet.destMAC = configTable[randLine2][1]
 	
-	sendPacket - pickle.dumps(packet)
+	sendPacket = pickle.dumps(packet)
 	
 	sock.sendto(sendPacket, (ipAddr, port))
+	
+	print "Sleeping: " + str(timeInt)
 	
 	sleep(timeInt)
 	
