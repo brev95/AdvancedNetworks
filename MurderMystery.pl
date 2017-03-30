@@ -113,5 +113,9 @@ menu() :-
 
 	writef("Clue F: is If the killer and victim were different sexes, the victim was a doctor.\n"),
 	writef("To see pairings type 'diffSex(K,V).' Keep hitting the space bar to see all the pairings\n\n"),
+	
+	writef("Type 'menu().' to see the clues again'\n\n"),
+	
+	writef("OR\n\n"),
 
-	writef("Type 'menu().' to see the clues again'\n").
+	writef("To guess who the killer and the victim are type 'solution(Killer, Victim).' With the name of who you think the Killer is and who you think the Victim is in the correct spots i.e. solution(bill, bob)").
