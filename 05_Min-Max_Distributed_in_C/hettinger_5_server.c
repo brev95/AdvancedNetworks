@@ -36,3 +36,4 @@ int main(int argc, char **argv) {
 }
 
 
+//atoi on all received data
