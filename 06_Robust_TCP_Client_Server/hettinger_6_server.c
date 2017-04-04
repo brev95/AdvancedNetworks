@@ -6,6 +6,10 @@
 //
 // Description: 
 ////////////////////////////////////////////////////////////////////////
+#include <protocol-records.h>
+
+#define QUERYSIZE (sizeof(queryRecordType))
+#define RESPSIZE (sizeof(responseRecordType))
 
 typedef struct
 	{
@@ -20,7 +24,12 @@ void setupSignals();
 void sigChildHandler(int signo);
 void sigPipeHandler(int signo);
 void sigTermHandler(int signo);
-
+int handleConn(int fd);
+void readQuery(int fd, queryRecordType &rec);
+void handleErr(char* str);
+void bufToQueryRec(char buf, queryRecordType &rec);
+void getIdBySector(char text[], responseRecordType rsp);
+void getSectorById();
 
 int main(int argc, char** argv){
 	
@@ -83,3 +92,87 @@ void sigTermHandler(int signo){
 	return;
 }
 
+int handleConn(int fd){
+	char buf[QUERYSIZE];
+	char outBuf[RESPSIZE];
+	queryRecordType rec;
+	responseRecordType outRec;
+	
+	readQuery(fd, &rec);
+
+	outRec.command = rec.command;
+	switch(rec.command){
+		case 0:
+			getTimeStr(outRec.data.text, MAX_MESSAGE_TEXT);
+			break;
+		case 1:
+			getSectorById(rec.text, outRec.data);
+			break;
+		case 2:
+			getIdBySector(rec.text, outRec.data);
+			break;
+		default:
+			break;
+	}
+	
+	// Missing stuff here
+	
+	return 0;
+}
+
+void readQuery(int fd, queryRecordType &rec){
+	int nbytes = read(fd, buf, QUERYSIZE);
+	if(nbytes < 0){
+		if(errno == EINTR{
+			continue;
+		} else {
+			handleErr("Read Error");
+		}
+	}
+	else if(nbytes == 0){
+		printf("Client send EOF");
+		return -1;
+	}
+	bufToQueryRec(buf, &rec);
+}
+
+void handleErr(char* str){
+	perror(str);
+	fflush(STDERR);
+	exit(1);
+}
+
+void bufToQueryRec(char buf, queryRecordType rec){
+	
+}
+
+void getTimeStr(outRec.data.text){ // fix parameters
+	time_t ticks;
+	ticks = time(NULL);
+	strncpy(outRec.data.text, (ctime(ticks)), MAX_MESSAGE_TEXT);
+}
+
+void getIdBySector(char text[], responseRecordType rsp){
+	int i;
+	for(i = 0; i < 10, i++){
+		if(strcmp(database[i].sector, text) == 0){
+			resp.status = '1';
+			strncpy(resp.data.record.ID, database[i].ID, MAX_ID_TEXT);
+			strncpy(resp.data.record.sector, database[i].sector, MAX_SECTOR_TEXT);
+			return;
+		}
+	}
+	resp.status = 0;
+	strncpy(resp.data.text, "Record not found", MAX_MESSAGE_TEXT);
+	return;
+}
+
+void getSectorById(){
+	
+}
+
+void readQuery(int fd, queryRecordType rec){
+	while(){
+		
+	}
+}
