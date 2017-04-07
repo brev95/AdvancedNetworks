@@ -50,17 +50,19 @@ bind(listenfd, (struct sockaddr *) &serverAddress, sizeof(serverAddress));
 
 listen(listenfd, MAX_LISTEN_QUEUE_LENGTH);
 
-// Infinite loop
-for ( ; ; ) 
-   {
-   clientfd = accept(listenfd, (struct sockaddr *) NULL, NULL);
+clientfd = accept(listenfd, (struct socketaddr *) NULL, NULL);
 
-   clockTicks = time(NULL);
-   snprintf(buffer, sizeof(buffer), "%.24s\r\n", ctime(&clockTicks));
-   write(clientfd, buffer, strlen(buffer));
+FILE * rfp;
+rfp = fopen("sourcefile.txt", "r");
 
-   close(clientfd);
-   } // End for
+FILE * wfp;
+wfp = fopen("targetfile.txt", "w+");
+
+while(fgets(buffer, MAX_LINE_LENGTH, rfp) != NULL){
+	write(clientfd, buffer, strlen(buffer));
+}
+
+close(clientfd);
 
 return 0;
 } // End main
