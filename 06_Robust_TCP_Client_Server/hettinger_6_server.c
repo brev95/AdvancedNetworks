@@ -6,7 +6,13 @@
 //
 // Description: 
 ////////////////////////////////////////////////////////////////////////
+
 #include <protocol-records.h>
+#include <socket.h>
+#include <time.h>
+#include <stdio.h>
+#include <strings.h>
+#include <sockio.h>
 
 #define QUERYSIZE (sizeof(queryRecordType))
 #define RESPSIZE (sizeof(responseRecordType))
@@ -29,7 +35,7 @@ void readQuery(int fd, queryRecordType &rec);
 void handleErr(char* str);
 void bufToQueryRec(char buf, queryRecordType &rec);
 void getIdBySector(char text[], responseRecordType rsp);
-void getSectorById();
+void getSectorById(char text[], responseRecordType rsp);
 
 int main(int argc, char** argv){
 	
@@ -48,7 +54,7 @@ setupSignals();
 
 void argCheck(int argc){
 	if(argc != 2){
-		printf("usage: hettinger_6_server <portNum>\n");
+		printf("usage: ./hettinger_6_server <portNum>\n");
 		exit(1);
 	}
 	return;
