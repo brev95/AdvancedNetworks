@@ -65,6 +65,7 @@ while(1):
 		pass
 	
 	elif(opt == 'q'):
+		print("Exiting")
 		exit(0)
 	else:
 		print("That is an invalid option")

@@ -10,4 +10,4 @@ from socket import *
 from sys import *
 import wave
 import struct
-import ossaudiodev
+import pygame
