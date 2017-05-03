@@ -8,7 +8,7 @@
 # Imports
 from socket import *
 from sys import *
-from os import path
+from os import path, stat
 from pathlib import Path
 
 
@@ -31,8 +31,8 @@ port2 = int(argv[4])
 
 
 # Connect sockets to ports
-#server_address_1 = (ip1, port1)
-#clientSocket1.connect(server_address_1)
+server_address_1 = (ip1, port1)
+clientSocket1.connect(server_address_1)
 
 #server_address_2 = (ip2, port2)
 #clientSocket2.connect(server_address_2)
@@ -50,11 +50,17 @@ while(1):
 		if(Path(fileName).is_file()):
 			f = open(fileName, 'rb')
 			w = open("output.txt", 'w')					# Testing
+			
+			fileLen = stat(fileName).st_size
+			w.write(str(fileLen) + '\n')				# Testing
+			
+			clientSocket1.send(str(fileLen))			# Not working
+			clientSocket1.send(fileName)
+			
 			while(1):
 				toSend = f.read(1024)
 				w.write(str(toSend))					# Testing
-				#print(toSend)
-				#clientSocket1.send(toSend)
+				clientSocket1.send(toSend)
 				if(toSend == b''):
 					print("Done sending\n")
 					break
@@ -62,7 +68,14 @@ while(1):
 			print("File not found\n")
 		
 	elif(opt == str(2)): # Play an audio file with server2
-		pass
+		while(1):
+			print("Type '1' to play an audio file")
+			print("Type '2' to stop playing an audio file")
+			print("Type '3' to list available audio files")
+			print("Type 'q' to quit")
+			opt3 = input()
+			
+			
 	
 	elif(opt == 'q'):
 		print("Exiting")
